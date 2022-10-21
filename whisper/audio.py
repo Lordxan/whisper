@@ -19,7 +19,7 @@ N_SAMPLES = CHUNK_LENGTH * SAMPLE_RATE  # 480000: number of samples in a chunk
 N_FRAMES = exact_div(N_SAMPLES, HOP_LENGTH)  # 3000: number of frames in a mel spectrogram input
 
 
-def load_audio(file: str, sr: int = SAMPLE_RATE):
+def load_audio(file: str, sr: int = SAMPLE_RATE, args):
     """
     Open an audio file and read as mono waveform, resampling as necessary
 
@@ -39,7 +39,7 @@ def load_audio(file: str, sr: int = SAMPLE_RATE):
         # This launches a subprocess to decode audio while down-mixing and resampling as necessary.
         # Requires the ffmpeg CLI and `ffmpeg-python` package to be installed.
         out, _ = (
-            ffmpeg.input(file, threads=0)
+            ffmpeg.input(file, threads=0, **args)
             .output("-", format="s16le", acodec="pcm_s16le", ac=1, ar=sr)
             .run(cmd=["ffmpeg", "-nostdin"], capture_stdout=True, capture_stderr=True)
         )
